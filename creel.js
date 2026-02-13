@@ -38,9 +38,9 @@ function getRadius(value) {
 let statesData, damsData, riverBasinsData;
 
 Promise.all([
-    fetch('States.geojson').then(response => response.json()),
-    fetch('Dams.geojson').then(response => response.json()),
-    fetch('RiverBasins.geojson').then(response => response.json())
+    fetch('BasinStates.json').then(response => response.json()),
+    fetch('ColoradoRiverDams.json').then(response => response.json()),
+    fetch('RiverBasins.json').then(response => response.json())
 ]).then(([states, dams, riverBasins]) => {
     // assign loaded data to outer scope variables
     statesData = states;
@@ -241,4 +241,5 @@ function addProportionalLegend() {
     
     legend.addTo(proportionalMap);
 }
+
 
