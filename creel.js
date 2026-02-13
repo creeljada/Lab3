@@ -41,11 +41,11 @@ Promise.all([
     fetch('BasinStates.json').then(response => response.json()),
     fetch('ColoradoRiverDams.json').then(response => response.json()),
     fetch('RiverBasins.json').then(response => response.json())
-]).then(([states, dams, riverBasins]) => {
+]).then(([BasinStates, ColoradoRiverDams, RiverBasins]) => {
     // assign loaded data to outer scope variables
-    statesData = states;
-    damsData = dams;
-    riverBasinsData = riverBasins;
+    statesData = BasinStates;
+    damsData = ColoradoRiverDams;
+    riverBasinsData = RiverBasins;
 
     // add states to both maps (simple boundary with popup)
     L.geoJSON(statesData, {
@@ -241,5 +241,6 @@ function addProportionalLegend() {
     
     legend.addTo(proportionalMap);
 }
+
 
 
