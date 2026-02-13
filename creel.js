@@ -34,18 +34,85 @@ function getRadius(value) {
     return Math.max(4, Math.sqrt(value) * 2);
 }
 
-// add data layers
-let statesData, damsData, riverBasinsData;
+// add data layers *used ai to get data to cooperate
 
-Promise.all([
-    fetch('BasinStates.json').then(response => response.json()),
-    fetch('ColoradoRiverDams.json').then(response => response.json()),
-    fetch('RiverBasins.json').then(response => response.json())
-]).then(([BasinStates, ColoradoRiverDams, RiverBasins]) => {
-    // assign loaded data to outer scope variables
-    statesData = BasinStates;
-    damsData = ColoradoRiverDams;
-    riverBasinsData = RiverBasins;
+Promiselet statesData;
+let damsData;
+let riverBasinsData;
+
+/* -------------------------
+   LOAD STATES
+-------------------------- */
+fetch('BasinStates.json')
+    .then(response => response.json())
+    .then(data => {
+
+        statesData = data;
+
+        L.geoJSON(statesData, {
+            style: {
+                weight: 1,
+                color: '#444',
+                fillOpacity: 0
+            }
+        }).addTo(choroplethMap);
+
+    })
+    .catch(error => console.error("Error loading BasinStates:", error));
+
+
+/* -------------------------
+   LOAD DAMS
+-------------------------- */
+fetch('ColoradoRiverDams.json')
+    .then(response => response.json())
+    .then(data => {
+
+        damsData = data;
+
+        L.geoJSON(damsData, {
+            pointToLayer: function(feature, latlng) {
+
+                let value =
+                    Number(feature.properties.storage) ||
+                    Number(feature.properties.height) ||
+                    10;
+
+                return L.circleMarker(latlng, {
+                    radius: getRadius(value),
+                    fillColor: '#0066cc',
+                    color: '#000',
+                    weight: 1,
+                    fillOpacity: 0.6
+                });
+            }
+        }).addTo(proportionalMap);
+
+    })
+    .catch(error => console.error("Error loading Dams:", error));
+
+
+/* -------------------------
+   LOAD BASINS
+-------------------------- */
+fetch('RiverBasins.json')
+    .then(response => response.json())
+    .then(data => {
+
+        riverBasinsData = data;
+
+        L.geoJSON(riverBasinsData, {
+            style: {
+                weight: 3,
+                color: '#0066cc',
+                dashArray: '5,5',
+                fillOpacity: 0
+            }
+        }).addTo(choroplethMap);
+
+    })
+    .catch(error => console.error("Error loading Basins:", error));
+
 
     // add states to both maps (simple boundary with popup)
     L.geoJSON(statesData, {
@@ -241,6 +308,7 @@ function addProportionalLegend() {
     
     legend.addTo(proportionalMap);
 }
+
 
 
 
